@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data</title>
+</head>
+<body>
+    <h1>Data for Selected Date</h1>
+    {% if temperature and wind %}
+        <p>Temperature: {{ temperature }} °C</p>
+        <p>Wind: {{ wind }} m/s</p>
+    {% else %}
+        <p>Data not available for the selected date.</p>
+    {% endif %}
+</body>
+</html>
