@@ -7,7 +7,7 @@ DATABASE = {
     'host': '::1',
     'database': 'Bade',
     'user': 'postgres',
-    'password': 'ROOT'
+    'password': 'root'
 }
 
 # Function to connect to the PostgreSQL database
