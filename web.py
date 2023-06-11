@@ -61,6 +61,33 @@ def checkwindtemp():
     except Exception as e:
         print(f"Error checking date: {str(e)}")
 
+def retrieve_data_from_database(selected_date):
+    try:
+        connection = connect_to_database()
+        if connection is None:
+            return None
+
+
+        cursor = connection.cursor()
+        cursor.execute(f"SELECT temperature, vind FROM dag WHERE dag = {selected_date}")
+        result2 = cursor.fetchone()
+
+        if result2 is not None:
+            temperature, wind = result2
+            return temperature, wind
+        else:
+            return None
+    except Exception as e:
+        print(f"Error retrieving data from the database: {str(e)}")
+
+def get_day_of_year(selected_date):
+    try:
+        selected_date_obj = date.fromisoformat(selected_date)
+        start_of_year = date(selected_date_obj.year, 1, 1)
+        day_of_year = (selected_date_obj - start_of_year).days + 1
+        return day_of_year
+    except ValueError:
+        return None
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -68,7 +95,7 @@ def index():
         try:
             # Check the date when the button is clicked
             result = check_date()
-            if result is not None and result > 15:
+            if result is not None and result > 13:
                 return render_template('index.html', result='Yes, it is beach weather!')
             else:
                 return render_template('index.html', result='No, it is not beach weather.')
@@ -91,9 +118,28 @@ def windtemp():
     else:
         return render_template('windtemp.html')
 
+@app.route('/get_data', methods=['POST'])
+def get_data():
+    if request.method == 'POST':
+        try:
+            selected_date = request.form['date']
+            day_of_year = get_day_of_year(selected_date)
+            print(day_of_year)
+            if day_of_year is None:
+                return render_template('error.html', error_message='Invalid date format.')
+            
+            temperature, wind = retrieve_data_from_database(day_of_year)
+            
+            if temperature is not None and wind is not None:
+                return render_template('data.html', temperature=temperature, wind=wind)
+            else:
+                return render_template('data.html', temperature='N/A', wind='N/A')
+        except Exception as e:
+            return render_template('error.html', error_message=str(e))
 @app.route('/error')
 def error():
     return render_template('error.html', error_message='An error occurred.')
 
 if __name__ == '__main__':
     app.run()
+

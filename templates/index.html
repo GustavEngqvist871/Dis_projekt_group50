@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Is it beach weather?</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .button-container {
+            text-align: center;
+        }
+        .result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 20px;
+        }
+        .beach-image {
+            max-width: 800px; /* Adjust the maximum width as per your preference */
+            margin-top: 30px;
+        }
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .left-container {
+            flex: 1;
+            margin-right: 20px;
+        }
+        .right-container {
+            flex: 1;
+            margin-left: 20px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="flex-container">
+        <div class="button-container left-container">
+            <h1>Is it beach weather?</h1>
+            <form method="POST">
+                <button type="submit">Check Beach Weather</button>
+            </form>
+            <form method="POST" action="{{ url_for('windtemp') }}">
+                <button type="submit">Check Wind and Temperature</button>
+            </form>
+            <div class="result">
+                {% if result %}
+                    <h2>{{ result }}</h2>
+                    {% if vind and temperature %}
+                        <p>Vind: {{ vind }} m/s</p>
+                        <p>Temperature: {{ temperature }} °C</p>
+                    {% endif %}
+                    {% if result == 'Yes, it is beach weather!' %}
+                        <img src="{{ url_for('static', filename='beach.jpg') }}" alt="Beach" class="beach-image">
+                    {% elif result == 'No, it is not beach weather.' %}
+                        <img src="{{ url_for('static', filename='beachno.jpg') }}" alt="No Beach">
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="button-container right-container">
+            <h1>Get specific wind and temperature</h1>
+            <form method="POST" action="{{ url_for('get_data') }}">
+                <label for="date">Choose a date:</label>
+                <input type="date" id="date" name="date" required>
+                <button type="submit">Get Data</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
